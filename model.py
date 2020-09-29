@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -64,13 +65,34 @@ p = 1000
 #listas a guardar los valores de energia y magnetizacion para cada temperatura
 e = np.ones(t_0)
 m = np.ones(t_0)
+#variables para realizar la primera grafica para la cual se estabilizan los valores de energia dada una temperatura
+beta_0 = 0.4
+red2 = sistema(x)
+#funcionamiento de la simulacion sin evolucion en temperatura
+#iteracion para la estabilizacion del sistema
+e_lista_prueba = np.ones(p)
 
+for j in range(p_0):
+	cambioespin(red2,beta_0)
+for j in range(p):
+	cambioespin(red2,beta_0)
+	e_lista_prueba[j] = energia(red2,x)
+plt.plot(e_lista_prueba)
+plt.ylabel("energia")
+plt.savefig("evolucion_energia")
+plt.close()
+	
+#funcionamiento de la simulacion con la evolucion de temperatura
 for i in range(t_0):
+	#se toman los valores de beta, teniendo en cuenta que son inversos de la temperatura
 	beta = 1./t[i]
+	#variables a guardar los valores de energia y magnetizacion de la evolucion del sistema dada una temperatura
 	e_1 = 0
 	m_1 = 0
+	#evolucion del estado hasta estabilizarse
 	for j in range(p_0):
 		cambioespin(red,beta)
+	#evolucion del estado una vez se encuentra estable
 	for j in range(p):
 		cambioespin(red,beta)
 		e_0 = energia(red,x)
@@ -79,24 +101,14 @@ for i in range(t_0):
 		m_1 += m_0
 	e[i] = e_1/(p*x*x)
 	m[i] = m_1/(p*x*x)
-"""
-for i in range(t_0):
-    cambioespin(red,beta)
-    m = med_magnetizacion(red,x)
-    e = energia(red,x)
-    e_bar += e
-    e_pro_0[i] = e
-    m_bar += m
-    m_pro_0[i] = m
-    
-    
-
-for i in range(t):
-    cambioespin(red, beta)
-    m = med_magnetizacion(red,x)
-    e = energia(x,x)
-    m_bar += m
-    m_pro[i] = m"""
-    
-
+#realizacion de la grafica pedida para la magnetizacion
+plt.plot(t,m)
+plt.xlabel("temperatura")
+plt.ylabel("magnetizacion")
+plt.savefig("grafica_magnetizacion_temperatura")
+plt.close()
+#se anexa una grafica de la evolucion de la energia con la temperatura
 plt.plot(t,e)
+plt.xlabel("temperatura")
+plt.ylabel("energia")
+plt.savefig("grafica_energia_temperatura")
