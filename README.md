@@ -1,6 +1,6 @@
 # 2d_ising_model
 Simulación del modelo de Ising en dos dimensiones.
-El archivo principal es el llamado model.py. Todo la simulación se encuentra escrita en el lenguaje de python. 
+El archivo principal es el llamado model.py. Toda la simulación se encuentra escrita en el lenguaje de python. 
 Los requerimientos necesarios para ejecutar el script son los siguientes:
  1*Python3
  2.Módulos:
