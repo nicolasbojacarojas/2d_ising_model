@@ -11,17 +11,17 @@ def sistema(x):
     return red
     
 #funcion que mide la magnetizacion presente en la red
-def med_magnetizacion(red,x):
+def med_magnetizacion(red):
     m=np.sum(red)
-    return m/x**2
+    return m
 
 #funcion que calcula la energia del sistema sin el efecto del campo magnetico
-def energia(red,x):
+def energia(red):
     e=0
-    for i in range(x):
-        for j in range(x):
-            e += -1*red[i,j]*(red[fronteras(i-1),j] + red[fronteras(i+1),j]) + red[i,fronteras(j+1)] + red[i,fronteras(j-1)]
-    return e/x**2
+    for i in range(len(red)):
+        for j in range(len(red)):
+            e += -red[i,j]*(red[fronteras(i-1),j] + red[fronteras(i+1),j]) + red[i,fronteras(j+1)] + red[i,fronteras(j-1)]
+    return e
 
 #condiciones de frontera, se aplican las condiciones de manera vertical y horizontal en la red de forma independiente
 def fronteras(p):
@@ -43,19 +43,20 @@ def cambioespin(red,beta):
             #se invierten los espines de la red
             inversion = -red[a,b]
             #se reliza el calculo de la energia de la red
-            energia = (inversion-red[a,b])*spin_value
+            energia = 2*red[a,b]*spin_value
             #se prueban las condiciones sugeridas en la tarea
-            if energia <= 0:
+            if energia < 0:
                 red[a,b] = -red[a,b]
-            elif np.exp(-beta**energia) > np.random.rand():
+            elif np.exp(-beta*energia) > np.random.rand():
                 red[a,b] = -red[a,b]
+    return red
 
 #tamaño de la red:
-x=15
+x=10
 #distintos valores de tempertura
-t_0=40
+t_0=100
 #valores de temperatura
-t=np.linspace(1,5,t_0)
+t=np.linspace(1,4,t_0)
 #creacion de la red
 red = sistema(x)
 #repeticiones a realizar para la estabilizacion de la energia
@@ -76,8 +77,8 @@ for j in range(p_0):
 	cambioespin(red2,beta_0)
 for j in range(p):
 	cambioespin(red2,beta_0)
-	e_lista_prueba[j] = energia(red2,x)
-plt.plot(e_lista_prueba)
+	e_lista_prueba[j] = energia(red2)
+plt.plot(e_lista_prueba/(p_0*x*x))
 plt.ylabel("energia")
 plt.savefig("evolucion_energia")
 plt.close()
@@ -95,14 +96,14 @@ for i in range(t_0):
 	#evolucion del estado una vez se encuentra estable
 	for j in range(p):
 		cambioespin(red,beta)
-		e_0 = energia(red,x)
-		m_0 = med_magnetizacion(red,x)
+		e_0 = energia(red)
+		m_0 = med_magnetizacion(red)
 		e_1 += e_0
 		m_1 += m_0
 	e[i] = e_1/(p*x*x)
 	m[i] = m_1/(p*x*x)
 #realizacion de la grafica pedida para la magnetizacion
-plt.plot(t,m)
+plt.scatter(t,m)
 plt.xlabel("temperatura")
 plt.ylabel("magnetizacion")
 plt.savefig("grafica_magnetizacion_temperatura")
